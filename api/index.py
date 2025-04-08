@@ -7,7 +7,7 @@ app = FastAPI(docs_url="/api/py/docs", openapi_url="/api/py/openapi.json")
 def hello_fast_api():
     return {"message": "Hello from FastAPI"}
 
-@app.post("/versions/update_webhook")
+@app.post("/api/versions/update_webhook")
 def hello_fast_api(payload):
     print(payload)
     return {"message": payload}
