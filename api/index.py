@@ -11,16 +11,18 @@ def hello_fast_api():
 async def update_webhook(request: Request):
     payload = await request.json()
 
-    if not payload['action']:
+    if not payload['action'] or not payload['release']:
         return {"Error": f"Unrecognized event: {payload}"}
 
     if payload['action'] == 'deleted':
         print("TODO: slack DevOps in case we need to delete a version")
 
-    stripped_version = payload['tag_name'].lower().replace('v', '')
-    release_date = payload['published_at'].replace('Z', '').replace('T', ' ')
+    if payload['action'] == 'published':
+        raw_release = payload['release']
+        stripped_version = raw_release['tag_name'].lower().replace('v', '')
+        release_date = raw_release['published_at'].replace('Z', '').replace('T', ' ')
 
-    product = f"Insert new product versions row: (1, {stripped_version}, NULL, 1, NULL, {release_date}, 1)"
-    print(product)
-    return {"message": product}
+        product = f"Insert new product versions row: (1, {stripped_version}, NULL, 1, NULL, {release_date}, 1)"
+        print(product)
+        return {"message": product}
 
