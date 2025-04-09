@@ -43,7 +43,7 @@ def verify_signature(payload_body, secret_token, signature_header):
 @app.post("/api/py/versions/update_webhook")
 async def update_webhook(request: Request):
     payload = await request.json()
-    if verify_signature(payload, "secret", request.headers['X-Hub-Signature-256']):
+    if verify_signature(payload, "secret", request.headers.get('x-hub-signature-256')):
         print("VERIFY PASS")
 
     # only process release events
