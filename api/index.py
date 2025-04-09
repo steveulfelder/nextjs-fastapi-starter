@@ -42,9 +42,11 @@ def verify_signature(payload_body, secret_token, signature_header):
 
 @app.post("/api/py/versions/update_webhook")
 async def update_webhook(request: Request):
-    payload = await request.json()
-    if verify_signature(payload, "secret", request.headers.get('x-hub-signature-256')):
+    body = await request.body()
+    if verify_signature(body, "secret", request.headers.get('x-hub-signature-256')):
         print("VERIFY PASS")
+
+    payload = await request.json()
 
     # only process release events
     if not payload['action'] or not payload['release']:
@@ -63,7 +65,7 @@ async def update_webhook(request: Request):
     if payload['action'] == 'deleted':
         print("TODO: slack DevOps in case we need to delete a version")
 
-    # insert
+    # insert new version into database
     if payload['action'] == 'published':
         release = payload['release']
         product_id = PRODUCT_IDS[repo['name']]
